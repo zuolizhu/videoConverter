@@ -20,22 +20,15 @@ app.on('ready', () => {
 
 
 ipcMain.on('addedVideos', (e, videos) => {
-  // const promise = new Promise((resolve, reject) => {
-  //   ffmpeg.ffprobe(videos[0].path, (err, metadata) => {
-  //     resolve(metadata);
-  //   });
-  // });
-  // promise.then((metadata) => {
-  //   console.log(metadata);
-  // });
-
   //lodash utility
-  _.map(videos, video => {
+  const promises = _.map(videos, video => {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(video.path, (err, metadata) => {
         resolve(metadata);
       });
     });
   });
+
+  Promise.all(promises).then((results) => console.log(results));
 
 });
