@@ -5,6 +5,9 @@ import { ipcRenderer } from 'electron';
 // have been added and are pending conversion
 export const addVideos = videos => dispatch => {
   ipcRenderer.send('addedVideos', videos);
+  ipcRenderer.on('completeMetadata', (e, videosWithData) => {
+    dispatch({ type: ADD_VIDEOS, payload: videosWithData });
+  });
 };
 
 
