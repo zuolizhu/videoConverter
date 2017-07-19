@@ -26,7 +26,7 @@ ipcMain.on('addedVideos', (e, videos) => {
       ffmpeg.ffprobe(video.path, (err, metadata) => {
 
         video.duration = metadata.format.duration;
-        video.formart = 'avi';
+        video.formart = 'AVI';
 
         resolve(video);
       });
@@ -46,7 +46,11 @@ ipcMain.on('startConversion', (e, videos) => {
     const outputPath = `${outputDirectory}${outputName}.${video.format}`;
     ffmpeg(video.path)
     .output(outputPath)
-    .on('end', () => console.log('Video conversion complete!'))
+    .on('progress', ({ timemark }) =>
+      mainWindow.webContents.send('conversionProgress', { video, timemark })
+    )
+    .on('end', () =>
+    mainWindow.webContents.send('endConversion', {video, outputPath} ))
     .run();
   });
 });
